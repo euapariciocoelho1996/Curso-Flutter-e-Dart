@@ -5,7 +5,7 @@ import './resposta.dart';
 class Questionario extends StatelessWidget {
   final List<Map<String, Object>> perguntas;
   final int perguntaSelecionada;
-  final void Function() quandoResponder;
+  final void Function(int) quandoResponder;
 
   const Questionario({
     required this.perguntas,
@@ -26,11 +26,23 @@ class Questionario extends StatelessWidget {
         : [];
 
     return Column(
+      /*
+      - respostas é uma lista de mapas (ou objetos) que contêm dados das respostas.
+      - O método .map() transforma cada elemento de respostas em algo diferente (neste caso, widgets),
+      retornando uma nova lista.
+      - Cada item da lista respostas é passado como argumento para a função map, onde cada item é 
+      representado pela variável resp.
+      */
       children: [
         Questao(perguntas[perguntaSelecionada]['texto'] as String),
-        ...respostas
-            .map((resp) => Resposta(resp['texto'] as String, quandoResponder))
-            .toList(),
+        // resp pega o proximo elemento
+        ...respostas.map((resp) {
+          // Resposta estiliza as respostas dentro de um Sizebox
+          return Resposta(
+            resp['texto'] as String,
+            () => quandoResponder(resp['pontuacao'] as int),
+          );
+        }).toList(),
       ],
     );
   }
